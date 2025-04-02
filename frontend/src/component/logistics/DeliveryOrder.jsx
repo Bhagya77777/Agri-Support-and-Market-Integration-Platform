@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 
 const DeliveryOrder = () => {
-
   const [formData, setFormData] = useState({
     orderId: '',
     deliveryAddress: '',
@@ -11,7 +10,7 @@ const DeliveryOrder = () => {
     insulatedPacking: false,
     customPacking: false,
     specialInstructions: '',
-    isBulkOrder: false, 
+    isBulkOrder: false,
     bulkOrderId: '',
     bulkDeliveryAddress: '',
     bulkContactNumber: '',
@@ -19,6 +18,9 @@ const DeliveryOrder = () => {
     preferredPacking: '',
     preferredVehicleType: '',
   });
+
+  const [errors, setErrors] = useState({}); // State to store validation errors
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false); // State to show success alert
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -36,9 +38,70 @@ const DeliveryOrder = () => {
     }
   };
 
+  // Validate the form fields
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate Order ID
+    if (!formData.orderId.trim()) {
+      newErrors.orderId = 'Order ID is required.';
+    }
+
+    // Validate Delivery Address
+    if (!formData.deliveryAddress.trim()) {
+      newErrors.deliveryAddress = 'Delivery Address is required.';
+    }
+
+    // Validate Contact Number
+    if (!formData.contactNumber.trim()) {
+      newErrors.contactNumber = 'Contact Number is required.';
+    } else if (!/^\d{10}$/.test(formData.contactNumber)) {
+      newErrors.contactNumber = 'Contact Number must be a 10-digit number.';
+    }
+
+    // Validate Bulk Order Fields if isBulkOrder is checked
+    if (formData.isBulkOrder) {
+      if (!formData.bulkOrderId.trim()) {
+        newErrors.bulkOrderId = 'Bulk Order ID is required.';
+      }
+      if (!formData.bulkDeliveryAddress.trim()) {
+        newErrors.bulkDeliveryAddress = 'Bulk Delivery Address is required.';
+      }
+      if (!formData.bulkContactNumber.trim()) {
+        newErrors.bulkContactNumber = 'Bulk Contact Number is required.';
+      } else if (!/^\d{10}$/.test(formData.bulkContactNumber)) {
+        newErrors.bulkContactNumber = 'Bulk Contact Number must be a 10-digit number.';
+      }
+      if (!formData.bulkOrderWeight || formData.bulkOrderWeight <= 0) {
+        newErrors.bulkOrderWeight = 'Bulk Order Weight must be a positive number.';
+      }
+    }
+
+    // Validate Preferred Packing
+    if (!formData.preferredPacking) {
+      newErrors.preferredPacking = 'Preferred Packing is required.';
+    }
+
+    // Validate Preferred Vehicle Type
+    if (!formData.preferredVehicleType) {
+      newErrors.preferredVehicleType = 'Preferred Vehicle Type is required.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Reset success alert
+    setShowSuccessAlert(false);
+
+    // Validate the form
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       // Send form data to the backend
@@ -51,10 +114,9 @@ const DeliveryOrder = () => {
       });
 
       if (!response.ok) {
-
         let errorMessage;
         try {
-          errorMessage = await response.json(); 
+          errorMessage = await response.json();
         } catch (err) {
           errorMessage = await response.text();
         }
@@ -65,8 +127,10 @@ const DeliveryOrder = () => {
 
       // Parse the JSON response
       const data = await response.json();
-      alert('Order submitted successfully!');
       console.log('Order Submission Response:', data);
+
+      // Show success alert
+      setShowSuccessAlert(true);
 
       // Reset the form after successful submission
       setFormData({
@@ -77,7 +141,7 @@ const DeliveryOrder = () => {
         insulatedPacking: false,
         customPacking: false,
         specialInstructions: '',
-        isBulkOrder: false, 
+        isBulkOrder: false,
         bulkOrderId: '',
         bulkDeliveryAddress: '',
         bulkContactNumber: '',
@@ -94,6 +158,13 @@ const DeliveryOrder = () => {
 
   return (
     <Container className="mt-5">
+      {/* Success Alert */}
+      {showSuccessAlert && (
+        <Alert variant="success" onClose={() => setShowSuccessAlert(false)} dismissible>
+          Order submitted successfully!
+        </Alert>
+      )}
+
       <Row>
         <Col md={6} className="mx-auto">
           <Card className="p-4 shadow">
@@ -108,8 +179,9 @@ const DeliveryOrder = () => {
                   name="orderId"
                   value={formData.orderId}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.orderId}
                 />
+                <Form.Control.Feedback type="invalid">{errors.orderId}</Form.Control.Feedback>
               </Form.Group>
 
               {/* Delivery Address */}
@@ -122,8 +194,9 @@ const DeliveryOrder = () => {
                   name="deliveryAddress"
                   value={formData.deliveryAddress}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.deliveryAddress}
                 />
+                <Form.Control.Feedback type="invalid">{errors.deliveryAddress}</Form.Control.Feedback>
               </Form.Group>
 
               {/* Contact Number */}
@@ -135,14 +208,13 @@ const DeliveryOrder = () => {
                   name="contactNumber"
                   value={formData.contactNumber}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.contactNumber}
                 />
+                <Form.Control.Feedback type="invalid">{errors.contactNumber}</Form.Control.Feedback>
               </Form.Group>
 
               {/* Packing Details */}
               <h5 className="text-primary mb-3">Packing Details</h5>
-
-              {/* Refrigerated Packing */}
               <Form.Group className="mb-3">
                 <Form.Check
                   type="checkbox"
@@ -152,8 +224,6 @@ const DeliveryOrder = () => {
                   onChange={handleChange}
                 />
               </Form.Group>
-
-              {/* Insulated Packing */}
               <Form.Group className="mb-3">
                 <Form.Check
                   type="checkbox"
@@ -163,8 +233,6 @@ const DeliveryOrder = () => {
                   onChange={handleChange}
                 />
               </Form.Group>
-
-              {/* Custom Packing */}
               <Form.Group className="mb-3">
                 <Form.Check
                   type="checkbox"
@@ -203,8 +271,6 @@ const DeliveryOrder = () => {
               {formData.isBulkOrder && (
                 <>
                   <h5 className="text-primary mb-3">Bulk Delivery Details</h5>
-
-                  {/* Bulk Order ID */}
                   <Form.Group className="mb-3">
                     <Form.Label>Bulk Order ID</Form.Label>
                     <Form.Control
@@ -213,11 +279,10 @@ const DeliveryOrder = () => {
                       name="bulkOrderId"
                       value={formData.bulkOrderId}
                       onChange={handleChange}
-                      required
+                      isInvalid={!!errors.bulkOrderId}
                     />
+                    <Form.Control.Feedback type="invalid">{errors.bulkOrderId}</Form.Control.Feedback>
                   </Form.Group>
-
-                  {/* Bulk Delivery Address */}
                   <Form.Group className="mb-3">
                     <Form.Label>Bulk Delivery Address</Form.Label>
                     <Form.Control
@@ -227,11 +292,10 @@ const DeliveryOrder = () => {
                       name="bulkDeliveryAddress"
                       value={formData.bulkDeliveryAddress}
                       onChange={handleChange}
-                      required
+                      isInvalid={!!errors.bulkDeliveryAddress}
                     />
+                    <Form.Control.Feedback type="invalid">{errors.bulkDeliveryAddress}</Form.Control.Feedback>
                   </Form.Group>
-
-                  {/* Bulk Contact Number */}
                   <Form.Group className="mb-3">
                     <Form.Label>Bulk Contact Number</Form.Label>
                     <Form.Control
@@ -240,11 +304,10 @@ const DeliveryOrder = () => {
                       name="bulkContactNumber"
                       value={formData.bulkContactNumber}
                       onChange={handleChange}
-                      required
+                      isInvalid={!!errors.bulkContactNumber}
                     />
+                    <Form.Control.Feedback type="invalid">{errors.bulkContactNumber}</Form.Control.Feedback>
                   </Form.Group>
-
-                  {/* Bulk Order Weight */}
                   <Form.Group className="mb-3">
                     <Form.Label>Bulk Order Weight</Form.Label>
                     <Form.Control
@@ -253,8 +316,9 @@ const DeliveryOrder = () => {
                       name="bulkOrderWeight"
                       value={formData.bulkOrderWeight}
                       onChange={handleChange}
-                      required
+                      isInvalid={!!errors.bulkOrderWeight}
                     />
+                    <Form.Control.Feedback type="invalid">{errors.bulkOrderWeight}</Form.Control.Feedback>
                   </Form.Group>
                 </>
               )}
@@ -267,13 +331,14 @@ const DeliveryOrder = () => {
                   name="preferredPacking"
                   value={formData.preferredPacking}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.preferredPacking}
                 >
                   <option value="">Select Packing Type</option>
                   <option value="Refrigerated">Refrigerated</option>
                   <option value="Insulated">Insulated</option>
                   <option value="Custom">Custom</option>
                 </Form.Control>
+                <Form.Control.Feedback type="invalid">{errors.preferredPacking}</Form.Control.Feedback>
               </Form.Group>
 
               {/* Preferred Vehicle Type */}
@@ -284,7 +349,7 @@ const DeliveryOrder = () => {
                   name="preferredVehicleType"
                   value={formData.preferredVehicleType}
                   onChange={handleChange}
-                  required
+                  isInvalid={!!errors.preferredVehicleType}
                 >
                   <option value="">Select Vehicle Type</option>
                   <option value="Truck">Truck</option>
@@ -292,6 +357,7 @@ const DeliveryOrder = () => {
                   <option value="Lorry">Lorry</option>
                   <option value="Bike">Bike</option>
                 </Form.Control>
+                <Form.Control.Feedback type="invalid">{errors.preferredVehicleType}</Form.Control.Feedback>
               </Form.Group>
 
               {/* Submit Button */}
