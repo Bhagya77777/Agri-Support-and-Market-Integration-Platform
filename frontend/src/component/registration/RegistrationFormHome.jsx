@@ -275,22 +275,7 @@ const RegistrationFormHome = () => {
                 </div>
                 
                 {/* Registration Type Toggle */}
-                <div className="registration-toggle mb-5">
-                  <div className="toggle-buttons d-flex justify-content-center">
-                    <button
-                      className={`toggle-button ${activeTab === 'transport' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('transport')}
-                    >
-                      <i className="fas fa-truck me-2"></i> Transport Provider
-                    </button>
-                    <button
-                      className={`toggle-button ${activeTab === 'shipper' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('shipper')}
-                    >
-                      <i className="fas fa-warehouse me-2"></i> Shipper
-                    </button>
-                  </div>
-                </div>
+                
                 
                 <RegistrationForm userType={activeTab} />
               </motion.div>

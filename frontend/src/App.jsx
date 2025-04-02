@@ -35,6 +35,7 @@ import Admin from './component/admin/Admin_home';
 import ManageRegistration from './component/admin/ManageRegistration';
 import DeliveryTrack from './component/admin/DeliveryTrack';
 import ManageWarehouse from './component/admin/ManageWarehouse';
+import ManageAdvice from './component/admin/ManageAdvice';
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -69,6 +70,7 @@ function App() {
         <Route path="/admin/registrations" element={<ManageRegistration/>} />
         <Route path="/admin/delivery-orders" element={<DeliveryTrack/>} />
         <Route path="/admin/warehouse-requests" element={<ManageWarehouse/>} />
+        <Route path="/admin/advice" element={<ManageAdvice/>} />
         
         </Routes>
       </div>

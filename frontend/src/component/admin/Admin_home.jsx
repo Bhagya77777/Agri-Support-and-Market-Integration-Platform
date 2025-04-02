@@ -54,7 +54,7 @@ const AdminHome = () => {
     {
       title: "Manage Agree Supports",
       description: "Manage agricultural support programs",
-      path: "/admin/agri-supports",
+      path: "/admin/advice",
       icon: "🌱",
       bgColor: "bg-teal-100",
       textColor: "text-teal-700"

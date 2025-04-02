@@ -9,6 +9,11 @@ export default function AgriAdviceForm() {
     image: null,
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  // Handle input changes
   const handleChange = (e) => {
     if (e.target.name === "image") {
       setFormData({ ...formData, image: e.target.files[0] });
@@ -17,9 +22,52 @@ export default function AgriAdviceForm() {
     }
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
+
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccessMessage("");
+
+      const formDataToSend = new FormData();
+      formDataToSend.append("fullName", formData.fullName);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("subject", formData.subject);
+      formDataToSend.append("message", formData.message);
+
+      if (formData.image) {
+        formDataToSend.append("image", formData.image);
+      }
+
+      const response = await fetch("http://localhost:5000/api/advice", {
+        method: "POST",
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit the advice request.");
+      }
+
+      const result = await response.json();
+      if (result.success) {
+        setSuccessMessage("Your advice request has been submitted successfully!");
+        setFormData({
+          fullName: "",
+          email: "",
+          subject: "",
+          message: "",
+          image: null,
+        });
+      } else {
+        throw new Error(result.message || "An unknown error occurred.");
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,6 +107,16 @@ export default function AgriAdviceForm() {
             <span>Email </span>
           </div>
         </div>
+
+        {/* Success/Error Messages */}
+        {successMessage && (
+          <p className="text-green-600 font-medium text-center mb-4">
+            {successMessage}
+          </p>
+        )}
+        {error && (
+          <p className="text-red-600 font-medium text-center mb-4">{error}</p>
+        )}
 
         {/* Form Section */}
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -131,9 +189,12 @@ export default function AgriAdviceForm() {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="px-6 py-2 rounded-xl text-white bg-black hover:bg-white hover:text-black hover:font-bold hover:shadow-xl transition"
+              disabled={loading}
+              className={`px-6 py-2 rounded-xl text-white ${
+                loading ? "bg-gray-400" : "bg-black hover:bg-white hover:text-black hover:font-bold hover:shadow-xl transition"
+              }`}
             >
-              Send Message
+              {loading ? "Submitting..." : "Send Message"}
             </button>
           </div>
         </form>

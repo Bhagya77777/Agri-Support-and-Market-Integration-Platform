@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import AgriAdviceForm from "../AgriAdviceForm";
 
 function Advice() {
@@ -13,90 +14,211 @@ function Advice() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-gray-50">
+    <div 
+      className="min-h-screen bg-cover bg-fixed bg-center"
+      style={{
+        backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7)), url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')"
+      }}
+    >
       {/* Floating Glass Navigation */}
-      <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-max">
-        <div className="flex items-center bg-white/80 backdrop-blur-lg rounded-full shadow-lg p-1 border border-gray-200/50">
+      <motion.nav 
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-max"
+      >
+        <div className="flex items-center bg-white/90 backdrop-blur-md rounded-full shadow-xl p-1 border border-green-200/60">
           {navItems.map((item) => (
             <Link
               key={item.name}
               to={item.path}
               className={`flex items-center px-5 py-2 rounded-full transition-all duration-300 ${
                 activeTab === item.name
-                  ? "bg-green-500 text-white shadow-md"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md"
+                  : "text-gray-700 hover:bg-green-50/80"
               }`}
               onClick={() => setActiveTab(item.name)}
             >
-              <span className="mr-2 text-lg">{item.icon}</span>
+              <motion.span 
+                whileHover={{ scale: 1.1 }}
+                className="mr-2 text-lg"
+              >
+                {item.icon}
+              </motion.span>
               <span className="font-medium">{item.name}</span>
             </Link>
           ))}
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Main Content */}
-      <main className="pt-24 pb-12 px-6 max-w-4xl mx-auto">
+      <main className="pt-28 pb-12 px-6 max-w-5xl mx-auto">
         {/* Header Section */}
-        <header className="text-center mb-12">
-          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-emerald-600 mb-4">
-            Agricultural Advice Portal
+        <motion.header 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-emerald-700 mb-4">
+            Agricultural Wisdom Hub
           </h1>
-          <p className="text-lg text-gray-600 mb-8">
-            Get expert guidance for your cultivation challenges
+          <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+            Cultivate success with expert guidance tailored for your fields
           </p>
-        </header>
+          <motion.div 
+            className="w-24 h-1 bg-gradient-to-r from-green-400 to-emerald-500 mx-auto rounded-full"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+          />
+        </motion.header>
 
         {/* Advice Form Section */}
-        <section className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-gray-100">
+        <motion.section
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-8 border border-green-100/50"
+        >
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-              Ask Our Experts
-            </h2>
-            <p className="text-gray-600">
-              Submit your questions about crops, soil, pests, or any agricultural concern
+            <div className="flex items-center mb-4">
+              <svg className="w-8 h-8 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h2 className="text-2xl font-semibold text-gray-800">
+                Seek Expert Counsel
+              </h2>
+            </div>
+            <p className="text-gray-600 pl-11">
+              Submit your agricultural queries about crops, soil health, pest management, or any farming concern
             </p>
           </div>
           <AgriAdviceForm />
-        </section>
+        </motion.section>
 
         {/* Additional Resources */}
-        <section className="mt-12 grid md:grid-cols-3 gap-6">
-          {[
-            {
-              title: "Crop Guides",
-              desc: "Detailed cultivation techniques",
-              icon: "🌱"
-            },
-            {
-              title: "Pest Solutions",
-              desc: "Organic pest management",
-              icon: "🐛"
-            },
-            {
-              title: "Market Trends",
-              desc: "Current agricultural markets",
-              icon: "📈"
-            }
-          ].map((resource, index) => (
-            <div 
-              key={index}
-              className="bg-white rounded-xl p-5 shadow-md border border-gray-100 hover:shadow-lg transition-shadow"
-            >
-              <div className="text-3xl mb-3">{resource.icon}</div>
-              <h3 className="font-semibold text-lg text-gray-800 mb-1">
-                {resource.title}
-              </h3>
-              <p className="text-gray-600">{resource.desc}</p>
-            </div>
-          ))}
-        </section>
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-16"
+        >
+          <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+            Cultivation Resources
+          </h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                title: "Crop Guides",
+                desc: "Seasonal cultivation techniques",
+                icon: "🌾",
+                color: "from-amber-100 to-amber-50"
+              },
+              {
+                title: "Pest Solutions",
+                desc: "Eco-friendly pest management",
+                icon: "🐞",
+                color: "from-red-100 to-red-50"
+              },
+              {
+                title: "Market Trends",
+                desc: "Current agricultural economics",
+                icon: "📊",
+                color: "from-blue-100 to-blue-50"
+              }
+            ].map((resource, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ y: -5 }}
+                className={`bg-gradient-to-br ${resource.color} rounded-xl p-6 shadow-md border border-green-100/50 hover:shadow-lg transition-all`}
+              >
+                <div className="text-4xl mb-4">{resource.icon}</div>
+                <h3 className="font-semibold text-lg text-gray-800 mb-2">
+                  {resource.title}
+                </h3>
+                <p className="text-gray-600 mb-4">{resource.desc}</p>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="text-green-600 font-medium text-sm flex items-center"
+                >
+                  Explore
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </motion.button>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* Testimonials */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="mt-16"
+        >
+          <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+            Farmer Success Stories
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                quote: "The advice helped increase my rice yield by 30% this season!",
+                farmer: "Rajesh Kumar, Punjab"
+              },
+              {
+                quote: "Organic pest solution saved my vegetable farm from disaster.",
+                farmer: "Priya M., Kerala"
+              }
+            ].map((testimonial, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.02 }}
+                className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md border border-green-100/50"
+              >
+                <svg className="w-8 h-8 text-green-500 mb-4 opacity-70" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className="text-gray-700 italic mb-4">"{testimonial.quote}"</p>
+                <p className="text-green-600 font-medium">— {testimonial.farmer}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white/80 backdrop-blur-md border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
-        © {new Date().getFullYear()} AgriAdvisory. All rights reserved.
-      </footer>
+      <motion.footer 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.9 }}
+        className="bg-white/90 backdrop-blur-md border-t border-green-200 py-6 text-center"
+      >
+        <div className="max-w-4xl mx-auto px-4">
+          <p className="text-gray-600 text-sm">
+            © {new Date().getFullYear()} AgriWisdom | Cultivating Knowledge, Harvesting Success
+          </p>
+          <div className="flex justify-center space-x-4 mt-3">
+            {['🌱', '🌻', '🌾', '🍃'].map((icon, i) => (
+              <motion.span
+                key={i}
+                animate={{ y: [0, -3, 0] }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2 + i,
+                  ease: "easeInOut"
+                }}
+                className="text-lg"
+              >
+                {icon}
+              </motion.span>
+            ))}
+          </div>
+        </div>
+      </motion.footer>
     </div>
   );
 }

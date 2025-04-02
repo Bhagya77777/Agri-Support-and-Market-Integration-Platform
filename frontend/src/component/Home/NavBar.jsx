@@ -75,12 +75,7 @@ const NavBar = () => {
                 Log in
               </Link>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link 
-                  to="/register"
-                  className="hexagon-button bg-gradient-to-r from-green-600 to-emerald-500 text-white px-6 py-2.5 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  Sign up
-                </Link>
+                
               </motion.div>
             </div>
           </motion.div>
