@@ -15,7 +15,7 @@ function BuyerHeader() {
     <nav className="bg-white shadow-sm">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         {/* Brand */}
-        <Link to="/store" className="text-2xl font-bold text-green-600">
+        <Link to="/main" className="text-2xl font-bold text-green-600">
           Agri-Support
         </Link>
 

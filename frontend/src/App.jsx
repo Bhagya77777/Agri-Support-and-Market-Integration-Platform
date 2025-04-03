@@ -4,6 +4,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 import HomePage from './component/Home/HomePage';
 import UserMainPage from './component/Home/UserMainPage';
+import AboutUs from './component/Home/AboutUs';
 
 // Online Store
 import Store from './component/store/pages/Home/Store';
@@ -65,6 +66,7 @@ function App() {
         <Route path="/feedback" element={<FarmerFeedback />} />
         <Route path="/advice" element={<Advice />} />
         <Route path="/skill_development" element={<SkillDevelopment />} />
+        <Route path="/about" element={<AboutUs />} />
    
         <Route path="/admin_home" element={<Admin/>} />
         <Route path="/admin/registrations" element={<ManageRegistration/>} />
